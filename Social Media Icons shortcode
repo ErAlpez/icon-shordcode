@@ -1,0 +1,71 @@
+
+/*
+ * Social Icons Shortcode
+ *
+ * [luvnhealth-social style="icon-with-title" facebook-url="#" instagram-url="#" youtube-url="#" pinterest-url="#"  color="#fff" join="true" signin="true" align="center"]
+ */
+function luvnhealth_social( $atts ) {
+	$atts = shortcode_atts( array(
+		'style' => 'icon-only',
+		'color' => '#fff',
+		'join' => 'true',
+		'signin' => 'true',
+		'align' => null,
+		'class' => '',
+		'facebook-url' => '#',
+		'instagram-url' => '#',
+		'youtube-url' => '#',
+		'pinterest-p-url' => '#'
+	), $atts );
+
+	$icons = array(
+		'facebook' => 'Facebook',
+		'youtube' => 'Youtube',
+		'instagram' => 'Instagram',
+		'pinterest-p' => 'Pinterest'
+	);
+
+	if( ! empty( $atts['align'] ) ) {
+		$align = ( $atts['align'] === 'center' ) ? ' style="float: none; text-align: center"' : ' style="float: '.$atts['align'].';';
+	}
+
+	if ( ! empty( $atts['class'] ) ) {
+		$class = ' '.$atts['class'];
+	}
+
+	$output = '';
+
+	switch ( $atts[ 'style' ] ) {
+		case 'icon-only':
+
+			$output .= '<ul class="social'.$class.'"'.$align.'>';
+				foreach ( $icons as $icon => $icon_name ) {
+					$output .= '<li><a href="'.$atts[$icon.'-url'].'" title="'.$icon_name.'" target="_blank" style="color:'.$atts['color'].'"><i class="fa fa-'.$icon.'"></i></a></li>';
+				}
+				if( $atts['join'] == 'true' ) {
+					$output .= '<li class="signin"><a href="/register" class="button" id="register">Join</a></li>';
+				}
+				if( $atts['signin'] == 'true' ) {
+					if( is_user_logged_in() ) {
+						$output .= '<li class="signin"><a href="'.wp_logout_url( home_url() ).'" class="button">Sign out</a></li>';
+					} else {
+						$output .= '<li class="signin"><a href="/login" class="button" id="login">Sign in</a></li>';
+					}
+				}
+			$output .= '</ul>';
+
+			break;
+		case 'icon-with-title':
+
+			$output .= '<ul class="social-box">';
+				foreach ( $icons as $icon => $icon_name ) {
+					$output .= '<li class="social-icon '.$icon.'"><a href="'.$atts[$icon.'-url'].'" target="_blank" style="color:'.$atts['color'].'"><i class="fa fa-'.$icon.'"></i> '.$icon_name.'</a></li>';
+				}
+			$output .= '</ul>';
+			
+			break;
+	}
+
+	return $output;
+}
+add_shortcode( 'luvnhealth-social', 'luvnhealth_social' );
